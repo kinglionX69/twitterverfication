@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Verification and Wallet Collection</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Twitter Verification and Wallet Collection</h1>
+    
+    <div id="step1">
+        <h2>Step 1: Connect Your Twitter</h2>
+        <button id="connectTwitter">Connect Twitter</button>
+    </div>
+
+    <div id="step2" style="display: none;">
+        <h2>Step 2: Verify Your Twitter Handle</h2>
+        <p>Your Twitter Handle: <span id="twitterHandle">@example</span></p>
+        <button id="verifyTwitter">Verify Twitter</button>
+    </div>
+
+    <div id="step3" style="display: none;">
+        <h2>Step 3: Enter Your Wallet Address</h2>
+        <label for="walletAddress">Aptos Wallet Address:</label>
+        <input type="text" id="walletAddress" placeholder="Enter your wallet address">
+        <button id="submitWallet">Submit</button>
+    </div>
+
+    <div id="result" style="display: none;">
+        <h2>Submission Successful</h2>
+        <p>Thank you! Your wallet address has been saved.</p>
+    </div>
+
+    <script>
+        const winners = ["@winner1", "@winner2", "@winner3"]; // Replace with your actual list of Twitter winners
+
+        document.getElementById('connectTwitter').addEventListener('click', () => {
+            // Mock Twitter connection (replace with actual Twitter API OAuth process)
+            const twitterHandle = prompt("Please enter your Twitter handle:");
+            if (twitterHandle) {
+                document.getElementById('twitterHandle').textContent = twitterHandle;
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+            }
+        });
+
+        document.getElementById('verifyTwitter').addEventListener('click', () => {
+            const twitterHandle = document.getElementById('twitterHandle').textContent;
+            if (winners.includes(twitterHandle)) {
+                alert("Twitter handle verified successfully!");
+                document.getElementById('step2').style.display = 'none';
+                document.getElementById('step3').style.display = 'block';
+            } else {
+                alert("Verification failed. Your Twitter handle is not on the winner list.");
+            }
+        });
+
+        document.getElementById('submitWallet').addEventListener('click', () => {
+            const walletAddress = document.getElementById('walletAddress').value;
+            const twitterHandle = document.getElementById('twitterHandle').textContent;
+
+            if (walletAddress) {
+                // Save the data (Replace with actual server API call)
+                console.log({ twitterHandle, walletAddress });
+
+                alert("Wallet address submitted successfully!");
+                document.getElementById('step3').style.display = 'none';
+                document.getElementById('result').style.display = 'block';
+            } else {
+                alert("Please enter a valid wallet address.");
+            }
+        });
+    </script>
+</body>
+</html>
