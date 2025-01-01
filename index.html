@@ -9,13 +9,15 @@
         const auth0 = new auth0.WebAuth({
             domain: 'dev-sb3y05xh07gdqx43.us.auth0.com',
             clientID: 'Vqg4kUeH62arGe2QT9fjFsJoost01CqU',
-            redirectUri: 'https://kinglionx69.github.io/twitterverfication/',
+            redirectUri: 'https://kinglionx69.github.io/twitterverfication/', // Updated redirect URL
             responseType: 'token id_token',
             scope: 'openid profile',
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('connectTwitter').addEventListener('click', () => {
+            document.getElementById('connectTwitter').addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent default behavior
+                console.log("Connect Twitter button clicked!");
                 auth0.authorize({
                     connection: 'twitter'
                 });
@@ -79,9 +81,7 @@
     <!-- Step 1: Connect Twitter -->
     <div id="step1">
         <h2>Step 1: Connect Your Twitter</h2>
-        <a href="#" id="connectTwitter">
-            <button>Connect Twitter</button>
-        </a>
+        <button id="connectTwitter">Connect Twitter</button>
     </div>
 
     <!-- Step 2: Verify Twitter Handle -->
