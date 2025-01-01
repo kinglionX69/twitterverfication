@@ -11,7 +11,7 @@
     <!-- Step 1: Connect Twitter -->
     <div id="step1">
         <h2>Step 1: Connect Your Twitter</h2>
-        <a href="/auth/twitter">
+        <a href="https://vinrfgmkbmwvrcjbvvdr.supabase.co/auth/v1/authorize?provider=twitter">
             <button id="connectTwitter">Connect Twitter</button>
         </a>
     </div>
@@ -43,7 +43,46 @@
             "@GBegins7574", "@TieuNiep2001", "@PawanGoud161", "@ChefWills33", "@shugo_boss", "@Airdropkavinda2", "@Teo1623183", "@ellysia_NFT", "@HubnerIND", "@ojigombadavid", "@bontesuri", "@dupasrakanie333", "@pashapolski", "@Dzu_Rio", "@10cKeane", "@Soraa0001", "@texturemontok", "@0xBusariKhalid", "@0xISML", "@oxmen17", "@scottdigity", "@Kadalbodong11", "@gogofor556", "@YEaglet84126", "@0guzakcay", "@ema_o02", "@sixXcruz", "@ikejijbrim", "@Tai61263222", "@GroothV14831", "@c26etherium", "@MostafSadegi", "@oztheinsomaniac", "@KCalcium46305", "@ryoma3391", "@ilya_birg", "@Casaralo", "@TEE_J456", "@SmokesDust7", "@skpunjabi21", "@0xtieuphung369", "@onepunchmeowo", "@menoywaria", "@TulaVuong123", "@k__nabill", "@fasollamaaa", "@zbbang11", "@maftinu", "@juny7766", "@beholderek", "@great_tony76596", "@Hasan309458112", "@Anggela2110", "@Jerry91816716", "@Oxtoto_777", "@AnalystCoder", "@evcalinye", "@Xcelpay0x1", "@aamirkhanspeaks", "@thegreyhoundds", "@mehrdadba72", "@aptosfer", "@mustapha_jabeer", "@0xkestar", "@amandaneku", "@Long68443177", "@CatCat067", "@Saurabh50474638", "@SoftCopy284921", "@OneOneXL", "@CodesHunterX", "@C20Patrick", "@aronsmok", "@Kakkavsesso", "@LyikatK", "@C29Handsom", "@NaztyCrypt", "@GoldD7992", "@Verontstw", "@xieBRIsik", "@billkint6", "@Famtrng", "@Oyewole_Ajibade", "@SmartEra360", "@0xmatchagreen", "@DaendelsETH", "@MarmeeChitlay", "@gussiyy", "@Trishakum", "@RoahPhar171", "@cryptocflife", "@ManeyXD", "@RandsBTC", "@Karol19298584", "@kuragarij", "@KryptoMarek2", "@soulcollectors1", "@Eujhiiiiiin", "@AtPizzWin", "@StrangeDoc60149"
         ];
 
-        // Function to handle the verified username from the server
+        // Handle Twitter OAuth Redirect
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get('access_token');
+        const user = urlParams.get('user');
+
+        if (user) {
+            const twitterUser = JSON.parse(user);
+            const twitterHandle = `@${twitterUser.user_metadata.user_name}`;
+            handleTwitterUser(twitterHandle); // Call the existing function
+        }
+
+        async function submitWallet(twitterHandle, walletAddress) {
+            const response = await fetch('https://your-supabase-project.supabase.co/rest/v1/wallet_addresses', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': '<your-supabase-api-key>',
+                    'Authorization': `Bearer <your-supabase-api-key>`
+                },
+                body: JSON.stringify({
+                    twitter_handle: twitterHandle,
+                    wallet_address: walletAddress
+                })
+            });
+
+            if (response.ok) {
+                alert("Wallet address submitted successfully!");
+                document.getElementById('step3').style.display = 'none';
+                document.getElementById('result').style.display = 'block';
+            } else {
+                alert("Failed to submit wallet address.");
+            }
+        }
+
+        document.getElementById('submitWallet').addEventListener('click', () => {
+            const walletAddress = document.getElementById('walletAddress').value;
+            const twitterHandle = document.getElementById('twitterHandle').textContent;
+            submitWallet(twitterHandle, walletAddress);
+        });
+
         function handleTwitterUser(twitterHandle) {
             document.getElementById('twitterHandle').textContent = twitterHandle;
             document.getElementById('step1').style.display = 'none';
@@ -59,10 +98,6 @@
                 }
             });
         }
-
-        // Replace this with the real username from the server after OAuth
-        const fakeTwitterHandle = "@GBegins7574"; // Simulated for testing
-        handleTwitterUser(fakeTwitterHandle);
     </script>
 </body>
 </html>
