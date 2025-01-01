@@ -45,17 +45,23 @@
 
         // Handle Twitter OAuth Redirect
         const urlParams = new URLSearchParams(window.location.search);
-        const accessToken = urlParams.get('access_token');
         const user = urlParams.get('user');
 
         if (user) {
-            const twitterUser = JSON.parse(user);
-            const twitterHandle = `@${twitterUser.user_metadata.user_name}`;
-            handleTwitterUser(twitterHandle); // Call the existing function
+            try {
+                const twitterUser = JSON.parse(user);
+                const twitterHandle = twitterUser?.user_metadata?.user_name
+                    ? `@${twitterUser.user_metadata.user_name}`
+                    : "Unknown User";
+                handleTwitterUser(twitterHandle);
+            } catch (error) {
+                console.error("Error parsing Twitter user data:", error);
+                alert("Failed to retrieve Twitter user information.");
+            }
         }
 
         async function submitWallet(twitterHandle, walletAddress) {
-            const response = await fetch('https://your-supabase-project.supabase.co/rest/v1/wallet_addresses', {
+            const response = await fetch('https://vinrfgmkbmwvrcjbvvdr.supabase.co/rest/v1/wallet_addresses', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
