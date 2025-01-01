@@ -4,22 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitter Verification and Wallet Collection</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <h1>Twitter Verification and Wallet Collection</h1>
-    
+
+    <!-- Step 1: Connect Twitter -->
     <div id="step1">
         <h2>Step 1: Connect Your Twitter</h2>
-        <button id="connectTwitter">Connect Twitter</button>
+        <a href="/auth/twitter">
+            <button id="connectTwitter">Connect Twitter</button>
+        </a>
     </div>
 
+    <!-- Step 2: Verify Twitter Handle -->
     <div id="step2" style="display: none;">
         <h2>Step 2: Verify Your Twitter Handle</h2>
-        <p>Your Twitter Handle: <span id="twitterHandle">@example</span></p>
+        <p>Your Twitter Handle: <span id="twitterHandle">Loading...</span></p>
         <button id="verifyTwitter">Verify Twitter</button>
     </div>
 
+    <!-- Step 3: Enter Wallet Address -->
     <div id="step3" style="display: none;">
         <h2>Step 3: Enter Your Wallet Address</h2>
         <label for="walletAddress">Aptos Wallet Address:</label>
@@ -27,53 +31,38 @@
         <button id="submitWallet">Submit</button>
     </div>
 
+    <!-- Step 4: Submission Result -->
     <div id="result" style="display: none;">
         <h2>Submission Successful</h2>
         <p>Thank you! Your wallet address has been saved.</p>
     </div>
 
     <script>
-        // Hardcoded list of winners
+        // Example: Hardcoded winner list
         const winners = [
             "@GBegins7574", "@TieuNiep2001", "@PawanGoud161", "@ChefWills33", "@shugo_boss", "@Airdropkavinda2", "@Teo1623183", "@ellysia_NFT", "@HubnerIND", "@ojigombadavid", "@bontesuri", "@dupasrakanie333", "@pashapolski", "@Dzu_Rio", "@10cKeane", "@Soraa0001", "@texturemontok", "@0xBusariKhalid", "@0xISML", "@oxmen17", "@scottdigity", "@Kadalbodong11", "@gogofor556", "@YEaglet84126", "@0guzakcay", "@ema_o02", "@sixXcruz", "@ikejijbrim", "@Tai61263222", "@GroothV14831", "@c26etherium", "@MostafSadegi", "@oztheinsomaniac", "@KCalcium46305", "@ryoma3391", "@ilya_birg", "@Casaralo", "@TEE_J456", "@SmokesDust7", "@skpunjabi21", "@0xtieuphung369", "@onepunchmeowo", "@menoywaria", "@TulaVuong123", "@k__nabill", "@fasollamaaa", "@zbbang11", "@maftinu", "@juny7766", "@beholderek", "@great_tony76596", "@Hasan309458112", "@Anggela2110", "@Jerry91816716", "@Oxtoto_777", "@AnalystCoder", "@evcalinye", "@Xcelpay0x1", "@aamirkhanspeaks", "@thegreyhoundds", "@mehrdadba72", "@aptosfer", "@mustapha_jabeer", "@0xkestar", "@amandaneku", "@Long68443177", "@CatCat067", "@Saurabh50474638", "@SoftCopy284921", "@OneOneXL", "@CodesHunterX", "@C20Patrick", "@aronsmok", "@Kakkavsesso", "@LyikatK", "@C29Handsom", "@NaztyCrypt", "@GoldD7992", "@Verontstw", "@xieBRIsik", "@billkint6", "@Famtrng", "@Oyewole_Ajibade", "@SmartEra360", "@0xmatchagreen", "@DaendelsETH", "@MarmeeChitlay", "@gussiyy", "@Trishakum", "@RoahPhar171", "@cryptocflife", "@ManeyXD", "@RandsBTC", "@Karol19298584", "@kuragarij", "@KryptoMarek2", "@soulcollectors1", "@Eujhiiiiiin", "@AtPizzWin", "@StrangeDoc60149"
         ];
 
-        document.getElementById('connectTwitter').addEventListener('click', () => {
-            // Mock Twitter connection (replace with actual Twitter API OAuth process)
-            const twitterHandle = prompt("Please enter your Twitter handle:");
-            if (twitterHandle) {
-                document.getElementById('twitterHandle').textContent = twitterHandle;
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
-            }
-        });
+        // Function to handle the verified username from the server
+        function handleTwitterUser(twitterHandle) {
+            document.getElementById('twitterHandle').textContent = twitterHandle;
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
 
-        document.getElementById('verifyTwitter').addEventListener('click', () => {
-            const twitterHandle = document.getElementById('twitterHandle').textContent;
-            if (winners.includes(twitterHandle)) {
-                alert("Twitter handle verified successfully!");
-                document.getElementById('step2').style.display = 'none';
-                document.getElementById('step3').style.display = 'block';
-            } else {
-                alert("Verification failed. Your Twitter handle is not on the winner list.");
-            }
-        });
+            document.getElementById('verifyTwitter').addEventListener('click', () => {
+                if (winners.includes(twitterHandle)) {
+                    alert("Twitter handle verified successfully!");
+                    document.getElementById('step2').style.display = 'none';
+                    document.getElementById('step3').style.display = 'block';
+                } else {
+                    alert("Verification failed. Your Twitter handle is not on the winner list.");
+                }
+            });
+        }
 
-        document.getElementById('submitWallet').addEventListener('click', () => {
-            const walletAddress = document.getElementById('walletAddress').value;
-            const twitterHandle = document.getElementById('twitterHandle').textContent;
-
-            if (walletAddress) {
-                // Save the data (Replace with actual server API call)
-                console.log({ twitterHandle, walletAddress });
-
-                alert("Wallet address submitted successfully!");
-                document.getElementById('step3').style.display = 'none';
-                document.getElementById('result').style.display = 'block';
-            } else {
-                alert("Please enter a valid wallet address.");
-            }
-        });
+        // Replace this with the real username from the server after OAuth
+        const fakeTwitterHandle = "@GBegins7574"; // Simulated for testing
+        handleTwitterUser(fakeTwitterHandle);
     </script>
 </body>
 </html>
