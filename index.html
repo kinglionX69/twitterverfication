@@ -6,27 +6,34 @@
     <title>Twitter Verification and Wallet Collection</title>
     <script src="https://cdn.auth0.com/js/auth0/9.19/auth0.min.js"></script>
     <script>
+        // Initialize Auth0
         const auth0 = new auth0.WebAuth({
             domain: 'dev-sb3y05xh07gdqx43.us.auth0.com',
             clientID: 'Vqg4kUeH62arGe2QT9fjFsJoost01CqU',
-            redirectUri: 'https://kinglionx69.github.io/twitterverfication/', // Updated redirect URL
+            redirectUri: 'https://kinglionx69.github.io/twitterverfication/',
             responseType: 'token id_token',
             scope: 'openid profile',
         });
 
+        // Handle button click for Twitter authentication
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('connectTwitter').addEventListener('click', (event) => {
-                event.preventDefault(); // Prevent default behavior
+                event.preventDefault();
                 console.log("Connect Twitter button clicked!");
-                auth0.authorize({
-                    connection: 'twitter'
-                });
+                try {
+                    auth0.authorize({
+                        connection: 'twitter'
+                    });
+                } catch (error) {
+                    console.error("Error during Auth0 authorization:", error);
+                }
             });
 
-            // Handle Auth0 redirect
+            // Handle Auth0 redirect after authentication
             auth0.parseHash((err, authResult) => {
                 if (authResult && authResult.idTokenPayload) {
                     const twitterHandle = `@${authResult.idTokenPayload.nickname}`;
+                    console.log("Twitter Handle Retrieved:", twitterHandle);
                     handleTwitterUser(twitterHandle);
                 } else if (err) {
                     console.error('Error:', err);
@@ -35,29 +42,7 @@
             });
         });
 
-        async function submitWallet(twitterHandle, walletAddress) {
-            const response = await fetch('https://vinrfgmkbmwvrcjbvvdr.supabase.co/rest/v1/wallet_addresses', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': '<your-supabase-api-key>',
-                    'Authorization': `Bearer <your-supabase-api-key>`
-                },
-                body: JSON.stringify({
-                    twitter_handle: twitterHandle,
-                    wallet_address: walletAddress
-                })
-            });
-
-            if (response.ok) {
-                alert("Wallet address submitted successfully!");
-                document.getElementById('step3').style.display = 'none';
-                document.getElementById('result').style.display = 'block';
-            } else {
-                alert("Failed to submit wallet address.");
-            }
-        }
-
+        // Handle the verified Twitter user
         function handleTwitterUser(twitterHandle) {
             document.getElementById('twitterHandle').textContent = twitterHandle;
             document.getElementById('step1').style.display = 'none';
@@ -73,6 +58,35 @@
                 }
             });
         }
+
+        // Submit wallet address
+        async function submitWallet(twitterHandle, walletAddress) {
+            console.log("Submitting wallet address for:", twitterHandle);
+            // Simulate backend submission
+            setTimeout(() => {
+                alert("Wallet address submitted successfully for " + twitterHandle);
+                document.getElementById('step3').style.display = 'none';
+                document.getElementById('result').style.display = 'block';
+            }, 1000);
+        }
+
+        // Handle wallet submission button
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('submitWallet').addEventListener('click', () => {
+                const walletAddress = document.getElementById('walletAddress').value;
+                const twitterHandle = document.getElementById('twitterHandle').textContent;
+                if (!walletAddress) {
+                    alert("Please enter a wallet address.");
+                    return;
+                }
+                submitWallet(twitterHandle, walletAddress);
+            });
+        });
+
+        // Example: Hardcoded winner list
+        const winners = [
+            "@GBegins7574", "@TieuNiep2001", "@PawanGoud161", "@ChefWills33", "@shugo_boss", "@Airdropkavinda2", "@Teo1623183"
+        ];
     </script>
 </head>
 <body>
@@ -104,12 +118,5 @@
         <h2>Submission Successful</h2>
         <p>Thank you! Your wallet address has been saved.</p>
     </div>
-
-    <script>
-        // Example: Hardcoded winner list
-        const winners = [
-            "@GBegins7574", "@TieuNiep2001", "@PawanGoud161", "@ChefWills33", "@shugo_boss", "@Airdropkavinda2", "@Teo1623183", "@ellysia_NFT", "@HubnerIND", "@ojigombadavid", "@bontesuri", "@dupasrakanie333", "@pashapolski", "@Dzu_Rio", "@10cKeane", "@Soraa0001", "@texturemontok", "@0xBusariKhalid", "@0xISML", "@oxmen17", "@scottdigity", "@Kadalbodong11", "@gogofor556", "@YEaglet84126", "@0guzakcay", "@ema_o02", "@sixXcruz", "@ikejijbrim", "@Tai61263222", "@GroothV14831", "@c26etherium", "@MostafSadegi", "@oztheinsomaniac", "@KCalcium46305", "@ryoma3391", "@ilya_birg", "@Casaralo", "@TEE_J456", "@SmokesDust7", "@skpunjabi21", "@0xtieuphung369", "@onepunchmeowo", "@menoywaria", "@TulaVuong123", "@k__nabill", "@fasollamaaa", "@zbbang11", "@maftinu", "@juny7766", "@beholderek", "@great_tony76596", "@Hasan309458112", "@Anggela2110", "@Jerry91816716", "@Oxtoto_777", "@AnalystCoder", "@evcalinye", "@Xcelpay0x1", "@aamirkhanspeaks", "@thegreyhoundds", "@mehrdadba72", "@aptosfer", "@mustapha_jabeer", "@0xkestar", "@amandaneku", "@Long68443177", "@CatCat067", "@Saurabh50474638", "@SoftCopy284921", "@OneOneXL", "@CodesHunterX", "@C20Patrick", "@aronsmok", "@Kakkavsesso", "@LyikatK", "@C29Handsom", "@NaztyCrypt", "@GoldD7992", "@Verontstw", "@xieBRIsik", "@billkint6", "@Famtrng", "@Oyewole_Ajibade", "@SmartEra360", "@0xmatchagreen", "@DaendelsETH", "@MarmeeChitlay", "@gussiyy", "@Trishakum", "@RoahPhar171", "@cryptocflife", "@ManeyXD", "@RandsBTC", "@Karol19298584", "@kuragarij", "@KryptoMarek2", "@soulcollectors1", "@Eujhiiiiiin", "@AtPizzWin", "@StrangeDoc60149"
-        ];
-    </script>
 </body>
 </html>
