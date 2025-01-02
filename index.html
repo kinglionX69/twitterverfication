@@ -1,86 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Twitter Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Verification and Wallet Collection</title>
+    <script src="https://cdn.auth0.com/js/auth0/9.19/auth0.min.js"></script>
+    <script>
+        // Initialize Auth0
+        const auth0 = new auth0.WebAuth({
+            domain: 'dev-sb3y05xh07gdqx43.us.auth0.com',
+            clientID: 'Vqg4kUeH62arGe2QT9fjFsJoost01CqU',
+            redirectUri: 'https://kinglionx69.github.io/twitterverfication/',
+            responseType: 'token id_token',
+            scope: 'openid profile',
+        });
+
+        // Handle button click for Twitter authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('connectTwitter').addEventListener('click', (event) => {
+                event.preventDefault();
+                console.log("Connect Twitter button clicked!");
+                try {
+                    auth0.authorize({
+                        connection: 'twitter'
+                    });
+                } catch (error) {
+                    console.error("Error during Auth0 authorization:", error);
+                }
+            });
+
+            // Handle Auth0 redirect after authentication
+            auth0.parseHash((err, authResult) => {
+                if (authResult && authResult.idTokenPayload) {
+                    const twitterHandle = `@${authResult.idTokenPayload.nickname}`;
+                    console.log("Twitter Handle Retrieved:", twitterHandle);
+                    handleTwitterUser(twitterHandle);
+                } else if (err) {
+                    console.error('Error:', err);
+                    alert('Authentication failed.');
+                }
+            });
+        });
+
+        // Handle the verified Twitter user
+        function handleTwitterUser(twitterHandle) {
+            document.getElementById('twitterHandle').textContent = twitterHandle;
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+
+            document.getElementById('verifyTwitter').addEventListener('click', () => {
+                if (winners.includes(twitterHandle)) {
+                    alert("Twitter handle verified successfully!");
+                    document.getElementById('step2').style.display = 'none';
+                    document.getElementById('step3').style.display = 'block';
+                } else {
+                    alert("Verification failed. Your Twitter handle is not on the winner list.");
+                }
+            });
+        }
+
+        // Submit wallet address
+        async function submitWallet(twitterHandle, walletAddress) {
+            console.log("Submitting wallet address for:", twitterHandle);
+            // Simulate backend submission
+            setTimeout(() => {
+                alert("Wallet address submitted successfully for " + twitterHandle);
+                document.getElementById('step3').style.display = 'none';
+                document.getElementById('result').style.display = 'block';
+            }, 1000);
+        }
+
+        // Handle wallet submission button
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('submitWallet').addEventListener('click', () => {
+                const walletAddress = document.getElementById('walletAddress').value;
+                const twitterHandle = document.getElementById('twitterHandle').textContent;
+                if (!walletAddress) {
+                    alert("Please enter a wallet address.");
+                    return;
+                }
+                submitWallet(twitterHandle, walletAddress);
+            });
+        });
+
+        // Example: Hardcoded winner list
+        const winners = [
+            "@GBegins7574", "@TieuNiep2001", "@PawanGoud161", "@ChefWills33", "@shugo_boss", "@Airdropkavinda2", "@Teo1623183"
+        ];
+    </script>
 </head>
 <body>
-  <h1>Twitter Login with Firebase</h1>
+    <h1>Twitter Verification and Wallet Collection</h1>
 
-  <!-- Login Button -->
-  <button id="twitterLogin">Login with Twitter</button>
+    <!-- Step 1: Connect Twitter -->
+    <div id="step1">
+        <h2>Step 1: Connect Your Twitter</h2>
+        <button id="connectTwitter">Connect Twitter</button>
+    </div>
 
-  <!-- Display User Info -->
-  <div id="userInfo" style="display: none;">
-    <h2>Welcome!</h2>
-    <p id="userName"></p>
-    <button id="logout">Logout</button>
-  </div>
+    <!-- Step 2: Verify Twitter Handle -->
+    <div id="step2" style="display: none;">
+        <h2>Step 2: Verify Your Twitter Handle</h2>
+        <p>Your Twitter Handle: <span id="twitterHandle">Loading...</span></p>
+        <button id="verifyTwitter">Verify Twitter</button>
+    </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    // Import Firebase SDKs
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-    import { getAuth, signInWithPopup, TwitterAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+    <!-- Step 3: Enter Wallet Address -->
+    <div id="step3" style="display: none;">
+        <h2>Step 3: Enter Your Wallet Address</h2>
+        <label for="walletAddress">Aptos Wallet Address:</label>
+        <input type="text" id="walletAddress" placeholder="Enter your wallet address">
+        <button id="submitWallet">Submit</button>
+    </div>
 
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCswDuIpAus0mC8d4tkwvQQXpAnFpmLfis",
-      authDomain: "pls-twitter-winner-verify.firebaseapp.com",
-      projectId: "pls-twitter-winner-verify",
-      storageBucket: "pls-twitter-winner-verify.firebasestorage.app",
-      messagingSenderId: "892303150947",
-      appId: "1:892303150947:web:2897af5590ddaee5e30d56",
-      measurementId: "G-16DEXB7W9N"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new TwitterAuthProvider();
-
-    // Handle Login
-    document.getElementById("twitterLogin").addEventListener("click", () => {
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          const user = result.user;
-          console.log("User Info:", user);
-          document.getElementById("userName").textContent = `Hello, ${user.displayName}`;
-          document.getElementById("userInfo").style.display = "block";
-          document.getElementById("twitterLogin").style.display = "none";
-        })
-        .catch((error) => {
-          console.error("Login failed:", error);
-        });
-    });
-
-    // Handle Logout
-    document.getElementById("logout").addEventListener("click", () => {
-      signOut(auth)
-        .then(() => {
-          console.log("User logged out");
-          document.getElementById("userInfo").style.display = "none";
-          document.getElementById("twitterLogin").style.display = "block";
-        })
-        .catch((error) => {
-          console.error("Logout failed:", error);
-        });
-    });
-
-    // Monitor Auth State
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("User is signed in:", user);
-        document.getElementById("userName").textContent = `Hello there, ${user.displayName}`;
-        document.getElementById("userInfo").style.display = "block";
-        document.getElementById("twitterLogin").style.display = "none";
-      } else {
-        console.log("No user is signed in");
-        document.getElementById("userInfo").style.display = "none";
-        document.getElementById("twitterLogin").style.display = "block";
-      }
-    });
-  </script>
+    <!-- Step 4: Submission Result -->
+    <div id="result" style="display: none;">
+        <h2>Submission Successful</h2>
+        <p>Thank you! Your wallet address has been saved.</p>
+    </div>
 </body>
 </html>
