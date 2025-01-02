@@ -72,7 +72,7 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("User is signed in:", user);
-        document.getElementById("userName").textContent = `Hello, ${user.displayName}`;
+        document.getElementById("userName").textContent = `Hello there, ${user.displayName}`;
         document.getElementById("userInfo").style.display = "block";
         document.getElementById("twitterLogin").style.display = "none";
       } else {
