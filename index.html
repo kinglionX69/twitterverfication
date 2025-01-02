@@ -4,45 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitter Verification and Wallet Collection</title>
-    <script src="https://cdn.auth0.com/js/auth0/9.19/auth0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Initialize Auth0
-        const auth0 = new auth0.WebAuth({
-            domain: 'dev-sb3y05xh07gdqx43.us.auth0.com',
-            clientID: 'Vqg4kUeH62arGe2QT9fjFsJoost01CqU',
-            redirectUri: 'https://kinglionx69.github.io/twitterverfication/',
-            responseType: 'token id_token',
-            scope: 'openid profile',
-        });
+        // Initialize Supabase
+        const supabase = supabase.createClient(
+            'https://vinrfgmkbmwvrcjbvvdr.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpbnJmZ21rYm13dnJjamJ2dmRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3MzA4MjUsImV4cCI6MjA1MTMwNjgyNX0.fM_LFnXl5iuH14eypiavDTssn6YAq_mriYQ-w3mP2fc'
+        );
 
-        // Handle button click for Twitter authentication
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('connectTwitter').addEventListener('click', (event) => {
-                event.preventDefault();
-                console.log("Connect Twitter button clicked!");
+            document.getElementById('connectTwitter').addEventListener('click', async () => {
                 try {
-                    auth0.authorize({
-                        connection: 'twitter'
+                    const { data, error } = await supabase.auth.signInWithOAuth({
+                        provider: 'twitter'
                     });
-                } catch (error) {
-                    console.error("Error during Auth0 authorization:", error);
-                }
-            });
 
-            // Handle Auth0 redirect after authentication
-            auth0.parseHash((err, authResult) => {
-                if (authResult && authResult.idTokenPayload) {
-                    const twitterHandle = `@${authResult.idTokenPayload.nickname}`;
-                    console.log("Twitter Handle Retrieved:", twitterHandle);
-                    handleTwitterUser(twitterHandle);
-                } else if (err) {
-                    console.error('Error:', err);
-                    alert('Authentication failed.');
+                    if (error) {
+                        console.error("Twitter authentication failed:", error);
+                        alert("Authentication failed.");
+                        return;
+                    }
+
+                    console.log("User authenticated:", data);
+                    const { user } = data;
+                    const twitterHandle = user?.user_metadata?.user_name;
+
+                    if (twitterHandle) {
+                        handleTwitterUser(`@${twitterHandle}`);
+                    } else {
+                        alert("Failed to retrieve Twitter handle.");
+                    }
+                } catch (error) {
+                    console.error("Error during Twitter authentication:", error);
                 }
             });
         });
 
-        // Handle the verified Twitter user
         function handleTwitterUser(twitterHandle) {
             document.getElementById('twitterHandle').textContent = twitterHandle;
             document.getElementById('step1').style.display = 'none';
@@ -59,31 +56,41 @@
             });
         }
 
-        // Submit wallet address
         async function submitWallet(twitterHandle, walletAddress) {
-            console.log("Submitting wallet address for:", twitterHandle);
-            // Simulate backend submission
-            setTimeout(() => {
-                alert("Wallet address submitted successfully for " + twitterHandle);
+            try {
+                const { data, error } = await supabase.from('wallet_addresses').insert({
+                    twitter_handle: twitterHandle,
+                    wallet_address: walletAddress
+                });
+
+                if (error) {
+                    console.error("Error submitting wallet address:", error);
+                    alert("Failed to submit wallet address.");
+                    return;
+                }
+
+                alert("Wallet address submitted successfully!");
                 document.getElementById('step3').style.display = 'none';
                 document.getElementById('result').style.display = 'block';
-            }, 1000);
+            } catch (error) {
+                console.error("Error during wallet submission:", error);
+            }
         }
 
-        // Handle wallet submission button
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('submitWallet').addEventListener('click', () => {
                 const walletAddress = document.getElementById('walletAddress').value;
                 const twitterHandle = document.getElementById('twitterHandle').textContent;
+
                 if (!walletAddress) {
                     alert("Please enter a wallet address.");
                     return;
                 }
+
                 submitWallet(twitterHandle, walletAddress);
             });
         });
 
-        // Example: Hardcoded winner list
         const winners = [
             "@GBegins7574", "@TieuNiep2001", "@PawanGoud161", "@ChefWills33", "@shugo_boss", "@Airdropkavinda2", "@Teo1623183"
         ];
