@@ -14,18 +14,27 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('connectTwitter').addEventListener('click', async () => {
+                console.log("Connect Twitter button clicked!"); // Debugging log
                 try {
+                    console.log("Starting Twitter OAuth...");
                     const { data, error } = await supabase.auth.signInWithOAuth({
                         provider: 'twitter'
                     });
 
                     if (error) {
                         console.error("Twitter authentication failed:", error);
+                        alert(`Authentication failed: ${error.message}`);
                         alert("Authentication failed.");
                         return;
                     }
 
                     console.log("User authenticated:", data);
+                    const { user } = data;
+                    if (!user) {
+                        console.error("No user data returned from Supabase.");
+                        alert("Failed to retrieve user information.");
+                        return;
+                    }
                     const { user } = data;
                     const twitterHandle = user?.user_metadata?.user_name;
 
